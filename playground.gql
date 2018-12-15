@@ -1,0 +1,37 @@
+query info {
+  info {
+    id
+    name
+    description
+  }
+}
+
+mutation addPerson {
+  addPerson(
+    input: {
+      name: "bob smith"
+      givenName: "bob"
+      familyName: "smith"
+      dateOfBirth: "1980-12-01"
+    }
+  )
+}
+
+query person {
+  person(id: "137e858b-995a-4760-841a-85c966393764") {
+    name
+    givenName
+    familyName
+    dateOfBirth
+  }
+}
+
+query allPeople {
+  allPeople {
+    id
+    name
+    givenName
+    familyName
+    dateOfBirth
+  }
+}

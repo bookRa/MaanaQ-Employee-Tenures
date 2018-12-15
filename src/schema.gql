@@ -1,0 +1,73 @@
+scalar Date
+
+scalar JSON
+#Info about service
+type Info {
+  id: String
+  name: String
+  description: String
+  # SRL
+  serviceReadinessLevel: Int
+}
+
+enum CompanyPosition {
+  CS
+  SALES
+  OFFICE
+  IT
+  HR
+  DEV
+  PM
+  AR
+  QA
+}
+
+type Employee {
+  # Kind fields
+  id: ID! # internal identifier (unique)
+  name: String # external identifier (non-unique)
+  givenName: String
+  familyName: String
+  position: CompanyPosition!
+  tenure: Tenure!
+}
+
+type Tenure {
+  start: Date!
+  end: Date
+}
+
+# Create a Employee instance
+input EmployeeInput {
+  id: ID # if known, otherwise one will be generated
+  tenure: Tenure!
+  name: String!
+  position: CompanyPosition!
+}
+
+# Standard queries (instance and batch)
+type Query {
+  info: Info
+}
+
+# # Standard mutations (instance and batch)
+# type Mutation {
+#   addPerson(input: PersonInput): ID
+#   updatePerson(input: PersonInput): ID
+#   deletePerson(id: ID!): Person
+# }
+
+# # Standard events
+# type PersonEvent {
+#   id: ID
+#   name: String
+#   givenName: String
+#   familyName: String
+#   dateOfBirth: Date
+# }
+
+# type Subscription {
+#   personAdded: PersonEvent!
+#   personUpdated: PersonEvent!
+#   personDeleted: PersonEvent!
+# }
