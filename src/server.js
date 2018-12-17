@@ -1,11 +1,19 @@
 /*=============================================================================
 NAME:        Server.js
 DESCRIPTION: Configure the graphql server.
-===============================================================================*/
-//
-// External Exports
-//
+===============================================================================
+ copyright 2018 Maana Incorporated
+ All Rights Reserved.
 
+ NOTICE:  All information contained herein is, and remains the property
+ of Maana Incorporated.  The intellectual and technical concepts contained
+ herein are proprietary to Maana Inc. and may be covered by U.S. and
+ Foreign Patents, patents in process, and are protected by trade secret
+ and/or copyright law.  Dissemination of this information and/or
+ reproduction of this material is strictly forbidden unless prior written
+ permission is obtained from Maana Inc.
+=============================================================================*/
+// load .env into process.env.*
 require('dotenv').config()
 
 // File system access
@@ -39,9 +47,17 @@ import {
 // GraphQL resolvers (implementation)
 import resolvers from './resolvers'
 
+//
+// Server setup
+//
+// Our service identity
+const SELF = process.env.SERVICE_ID || 'io.maana.employeetenure'
+
 // GraphQL schema (model)
 const typeDefs = fs.readFileSync('src/schema.gql', { encoding: 'utf-8' })
-
+console.log('TypeDef:')
+console.log(typeDefs)
+// log(SELF).info(`typeDefs is ${print.json(typeDefs)}`)
 // Compile schema
 export const schema = makeExecutableSchema({
   typeDefs,
@@ -52,27 +68,9 @@ export const schema = makeExecutableSchema({
 // Client setup
 // - allow this service to be a client of a remote service
 //
-let client
-const clientSetup = token => {
-  if (!client) {
-    // construct graphql client using endpoint and context
-    client = BuildGraphqlClient(REMOTE_KSVC_ENDPOINT_URL, (_, { headers }) => {
-      // return the headers to the context so httpLink can read them
-      return {
-        headers: {
-          ...headers,
-          authorization: token ? `Bearer ${token}` : ''
-        }
-      }
-    })
-  }
-}
 
-//
-// Server setup
-//
-// Our service identity
-const SELF = process.env.SERVICE_ID || 'io.maana.template'
+let client = null
+let authToken = null
 
 // HTTP port
 const PORT = process.env.PORT
@@ -83,21 +81,7 @@ const HOSTNAME = process.env.HOSTNAME || 'localhost'
 // External DNS name for service
 const PUBLICNAME = process.env.PUBLICNAME || 'localhost'
 
-// Remote (peer) services we use
-const REMOTE_KSVC_ENDPOINT_URL = process.env.REMOTE_KSVC_ENDPOINT_URL
-
 const app = express()
-
-//
-// CORS
-//
-const corsOptions = {
-  origin: `http://${PUBLICNAME}:3000`,
-  credentials: true // <-- REQUIRED backend setting
-}
-
-app.use(cors(corsOptions)) // enable all CORS requests
-app.options('*', cors()) // enable pre-flight for all routes
 
 app.get('/', (req, res) => {
   res.send(`${SELF}\n`)
@@ -112,8 +96,8 @@ const defaultHttpMiddleware = [
 
 const defaultSocketMiddleware = (connectionParams, webSocket) => {
   return new Promise(function(resolve, reject) {
-    log(SELF).warn(
-      'Socket Authentication is disabled. This should not run in production.'
+    console.log(
+      'Socket Authentication is disabled. This should not run in production'
     )
     resolve()
   })
@@ -128,7 +112,6 @@ const initServer = options => {
         ...defaultHttpMiddleware
       ]
     : [errorHandlerMiddleware(SELF), ...defaultHttpMiddleware]
-
   let socketMiddleware = socketAuthMiddleware
     ? socketAuthMiddleware
     : defaultSocketMiddleware
@@ -139,7 +122,7 @@ const initServer = options => {
     '/graphiql',
     graphiqlExpress({
       endpointURL: '/graphql',
-      subscriptionsEndpoint: `ws://${HOSTNAME}:${PORT}/subscriptsion`
+      subscriptionsEndpoint: `ws://${HOSTNAME}:${PORT}/subscriptions`
     })
   )
 

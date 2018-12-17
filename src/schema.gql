@@ -1,12 +1,16 @@
 scalar Date
 
 scalar JSON
-#Info about service
+
+# Information about the service
 type Info {
+  # A globally unique identifier for the serivce
   id: String
+  # The human readable name for the service
   name: String
+  # A description of the service's capabilities
   description: String
-  # SRL
+  # The Service Readiness Level (SRL) of the service
   serviceReadinessLevel: Int
 }
 
@@ -32,6 +36,11 @@ type Employee {
   tenure: Tenure!
 }
 
+input TenureInput {
+  start: Date!
+  end: Date
+}
+
 type Tenure {
   start: Date!
   end: Date
@@ -40,14 +49,16 @@ type Tenure {
 # Create a Employee instance
 input EmployeeInput {
   id: ID # if known, otherwise one will be generated
-  tenure: Tenure!
+  tenure: TenureInput!
   name: String!
   position: CompanyPosition!
 }
 
 # Standard queries (instance and batch)
 type Query {
-  info: Info
+  info: Info!
+  tenure1: Tenure!
+  employee1: [Employee!]!
 }
 
 # # Standard mutations (instance and batch)

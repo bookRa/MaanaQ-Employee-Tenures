@@ -1,23 +1,52 @@
 require('dotenv').config()
 
 import uuid from 'uuid'
-import pubsub from './pubsub'
 
 import { log, print } from 'io.maana.shared'
 
-const SELF = process.env.SERVICE_ID || 'io.maana.template'
+const SELF =
+  process.env.SERVICE_ID + 'resolvers' || 'io.maana.template.resolvers'
 
 // dummy in-memory store
 const people = {}
 
-export const resolver = {
+export default {
   Query: {
     info: async () => {
+      log(SELF).info('Info query was called')
       return {
         id: 'e5614056-8aeb-4008-b0dc-4f958a9b753a',
         name: 'io.maana.template',
         description: 'Maana Q Knowledge Service template'
       }
+    },
+    tenure1: async () => {
+      return {
+        start: 'Yesterday',
+        end: 'Tomorrow'
+      }
+    },
+    employee1: async () => {
+      return [
+        {
+          id: 1,
+          name: 'Omar',
+          position: 'DEV',
+          tenure: {
+            start: '11/12/18',
+            end: null
+          }
+        },
+        {
+          id: 1,
+          name: 'Steve',
+          position: 'CS',
+          tenure: {
+            start: '5/6/15',
+            end: null
+          }
+        }
+      ]
     }
     // allPeople: async () => Object.values(people),
     // person: async (_, { id }) => people[id]
