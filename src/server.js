@@ -55,8 +55,6 @@ const SELF = process.env.SERVICE_ID || 'io.maana.employeetenure'
 
 // GraphQL schema (model)
 const typeDefs = fs.readFileSync('src/schema.gql', { encoding: 'utf-8' })
-console.log('TypeDef:')
-console.log(typeDefs)
 // log(SELF).info(`typeDefs is ${print.json(typeDefs)}`)
 // Compile schema
 export const schema = makeExecutableSchema({
@@ -74,7 +72,7 @@ let authToken = null
 
 // HTTP port
 const PORT = process.env.PORT
-
+log(SELF).info(`port is ${PORT}`)
 // HOSTNAME for subscriptions etc.
 const HOSTNAME = process.env.HOSTNAME || 'localhost'
 
