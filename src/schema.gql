@@ -59,6 +59,9 @@ type Query {
   info: Info!
   tenure1: Tenure!
   employee1: [Employee!]!
+  startedBefore(employee1: EmployeeInput, employee2: EmployeeInput): Boolean!
+  workedTogether(employee1: EmployeeInput, employee2: EmployeeInput): Boolean!
+  sampleInterval(employee: EmployeeInput): Boolean!
 }
 
 # # Standard mutations (instance and batch)

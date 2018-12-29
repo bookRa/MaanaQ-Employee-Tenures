@@ -2,7 +2,9 @@ require('dotenv').config()
 
 import uuid from 'uuid'
 
-import { log, print } from 'io.maana.shared'
+import { log, print, MaanaDateScalar } from 'io.maana.shared'
+
+import { IntervalClient } from './IntervalClient'
 
 const SELF =
   process.env.SERVICE_ID + 'resolvers' || 'io.maana.template.resolvers'
@@ -11,6 +13,8 @@ const SELF =
 const people = {}
 
 export default {
+  // Date: MaanaDateScalar,
+
   Query: {
     info: async () => {
       log(SELF).info('Info query was called')
@@ -47,7 +51,12 @@ export default {
           }
         }
       ]
-    }
+    },
+
+    startedBefore: (root, input) => IntervalClient.startedBefore(root, input),
+    workedTogether: (root, input) => IntervalClient.workedTogether(root, input),
+    sampleInterval: (root, input) => IntervalClient.sampleInterval(root, input)
+
     // allPeople: async () => Object.values(people),
     // person: async (_, { id }) => people[id]
   }
